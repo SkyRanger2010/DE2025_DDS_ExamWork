@@ -145,3 +145,98 @@ SCD2 реализован как insert-only.
 
 ---
 
+## 7. Пример витрины построенной на основе DATA VAULT
+
+| region        | customer_country | customer_name         | orders_cnt | orders_amount |
+|--------------|------------------|-----------------------|------------|---------------|
+| MIDDLE EAST  | EGYPT            | Customer#000000902    | 6          | 946489.0      |
+| ASIA         | VIETNAM          | Customer#000001439    | 9          | 1548129.0     |
+| AMERICA      | UNITED STATES    | Customer#000000689    | 13         | 1788307.0     |
+| AFRICA       | ALGERIA          | Customer#000000823    | 22         | 2551940.0     |
+| ASIA         | JAPAN            | Customer#000001306    | 18         | 2263960.0     |
+| AMERICA      | UNITED STATES    | Customer#000000676    | 21         | 3601569.0     |
+| AFRICA       | ALGERIA          | Customer#000000295    | 19         | 3197184.0     |
+| AMERICA      | BRAZIL           | Customer#000000487    | 27         | 4092893.0     |
+| EUROPE       | GERMANY          | Customer#000000922    | 15         | 1865767.0     |
+| EUROPE       | FRANCE           | Customer#000001477    | 20         | 3224037.0     |
+
+Скрипт витрины:
+```sql
+-- ==========================================================================
+--                ПРИМЕР ВИТРИНЫ
+-- Количество и общая сумма заказов с группировкой (заказчик, страна, регион)
+-- ==========================================================================
+
+USE memory.data_vault;
+
+DROP TABLE IF EXISTS mart_orders_by_geo_customer;
+
+CREATE TABLE mart_orders_by_geo_customer AS
+WITH
+sat_order_last AS (
+  SELECT s.*
+  FROM sat_order s
+  JOIN (
+    SELECT hk_order, max(valid_from) AS max_vf
+    FROM sat_order
+    GROUP BY hk_order
+  ) x ON x.hk_order = s.hk_order AND x.max_vf = s.valid_from
+  WHERE coalesce(s.is_deleted, false) = false
+),
+sat_customer_last AS (
+  SELECT s.*
+  FROM sat_customer s
+  JOIN (
+    SELECT hk_customer, max(valid_from) AS max_vf
+    FROM sat_customer
+    GROUP BY hk_customer
+  ) x ON x.hk_customer = s.hk_customer AND x.max_vf = s.valid_from
+  WHERE coalesce(s.is_deleted, false) = false
+),
+sat_nation_last AS (
+  SELECT s.*
+  FROM sat_nation s
+  JOIN (
+    SELECT hk_nation, max(valid_from) AS max_vf
+    FROM sat_nation
+    GROUP BY hk_nation
+  ) x ON x.hk_nation = s.hk_nation AND x.max_vf = s.valid_from
+  WHERE coalesce(s.is_deleted, false) = false
+),
+sat_region_last AS (
+  SELECT s.*
+  FROM sat_region s
+  JOIN (
+    SELECT hk_region, max(valid_from) AS max_vf
+    FROM sat_region
+    GROUP BY hk_region
+  ) x ON x.hk_region = s.hk_region AND x.max_vf = s.valid_from
+  WHERE coalesce(s.is_deleted, false) = false
+)
+SELECT
+  r.r_name                    	AS region,
+  n.n_name                    	AS customer_country,
+  c.c_name                    	AS customer_name,
+  count(DISTINCT o.hk_order) 	AS orders_cnt,
+  round(sum(o.o_totalprice),0)	AS orders_amount
+FROM hub_order ho
+JOIN sat_order_last o
+  ON o.hk_order = ho.hk_order
+JOIN lnk_order_customer loc
+  ON loc.hk_order = ho.hk_order
+JOIN sat_customer_last c
+  ON c.hk_customer = loc.hk_customer
+JOIN lnk_customer_nation lcn
+  ON lcn.hk_customer = c.hk_customer
+JOIN sat_nation_last n
+  ON n.hk_nation = lcn.hk_nation
+JOIN lnk_nation_region lnr
+  ON lnr.hk_nation = n.hk_nation
+JOIN sat_region_last r
+  ON r.hk_region = lnr.hk_region
+GROUP BY
+  r.r_name, n.n_name, c.c_name;
+
+```
+
+---
