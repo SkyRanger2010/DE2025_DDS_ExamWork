@@ -140,6 +140,7 @@ SCD2 реализован как insert-only.
 - load_all_data.sql — скрипт загрузки всего датасета
 - load_by_date.sql — скрипт с параметром (загрузка по дате или полная)
 - ER.pdf — ER-диаграмма DATA VAULT
+- mart_example.sql — скрипт примера построения витрины на основе DATA VAULT
 - README.md — описание решения
 
 ---
