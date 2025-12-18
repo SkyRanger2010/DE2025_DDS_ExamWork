@@ -289,7 +289,6 @@ SELECT
   s.name,
   s.comment,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_region s
@@ -319,7 +318,6 @@ SELECT
   s.n_name,
   s.n_comment,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_nation s
@@ -353,7 +351,6 @@ SELECT
   s.c_mktsegment,
   s.c_comment,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_customer s
@@ -382,7 +379,6 @@ SELECT
   s.hashdiff_balance,
   s.c_acctbal,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_customer s
@@ -415,7 +411,6 @@ SELECT
   s.s_phone,
   s.s_comment,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_supplier s
@@ -444,7 +439,6 @@ SELECT
   s.hashdiff_balance,
   s.s_acctbal,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_supplier s
@@ -481,7 +475,6 @@ SELECT
   s.p_retailprice,
   s.p_comment,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_part s
@@ -516,7 +509,6 @@ SELECT
   s.o_shippriority,
   s.o_comment,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_order s
@@ -545,7 +537,6 @@ SELECT
   s.hashdiff_status,
   s.o_orderstatus,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_order s
@@ -577,7 +568,6 @@ SELECT
   s.ps_supplycost,
   s.ps_comment,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_partsupp s
@@ -619,7 +609,6 @@ SELECT
   s.l_shipmode,
   s.l_comment,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_lineitem s
@@ -649,7 +638,6 @@ SELECT
   s.hashdiff_status,
   s.l_linestatus,
   r.src_name,
-  r.load_ts,
   r.open_end,
   false
 FROM v_src_lineitem s
@@ -665,3 +653,4 @@ LEFT JOIN sat_lineitem_status cur
  AND cur.valid_from   = last.max_vf
 WHERE r.run_id = 1
   AND (cur.hlk_lineitem IS NULL OR cur.hashdiff <> s.hashdiff_status);
+
