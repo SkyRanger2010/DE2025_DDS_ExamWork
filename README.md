@@ -30,7 +30,7 @@
 - lnk_supplier_nation
 - lnk_order_customer
 - lnk_part_supplier
-- lnk_lineitem (Order + PartSupplier + LineNumber)
+- lnk_lineitem (между hub_order и lnk_part_supplier)
 
 ### SATELLITE (атрибуты, SCD2)
 - sat_region
