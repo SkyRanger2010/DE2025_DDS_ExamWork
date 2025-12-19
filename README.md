@@ -35,16 +35,16 @@
 ### SATELLITE (атрибуты, SCD2)
 - sat_region
 - sat_nation
-- sat_customer
-- sat_customer_balance
-- sat_supplier
-- sat_supplier_balance
+- sat_customer (редко меняющиеся признаки)
+- sat_customer_balance (часто меняющийся баланс)
+- sat_supplier (редко меняющиеся признаки)
+- sat_supplier_balance (часто меняющийся баланс)
 - sat_part
-- sat_order
-- sat_order_status
+- sat_order (редко меняющиеся признаки)
+- sat_order_status (часто меняющийся статус)
 - sat_part_supplier
-- sat_lineitem
-- sat_lineitem_status
+- sat_lineitem (редко меняющиеся признаки)
+- sat_lineitem_status (часто меняющийся статус)
 
 ---
 
